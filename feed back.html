@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feedback Collection System</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .feedback-list {
+      margin-top: 30px;
+    }
+
+    .feedback-item {
+      background: #f0f0f0;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .feedback-item h4 {
+      margin-bottom: 5px;
+      color: #007bff;
+    }
+
+    .success-msg {
+      text-align: center;
+      color: green;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Feedback Collection</h2>
+    <form id="feedbackForm">
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="email" id="email" placeholder="Your Email" required />
+      <textarea id="message" rows="4" placeholder="Your Feedback" required></textarea>
+      <button type="submit">Submit Feedback</button>
+    </form>
+
+    <div class="success-msg" id="successMsg"></div>
+
+    <div class="feedback-list" id="feedbackList">
+      <!-- Feedback items appear here -->
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('feedbackForm');
+    const feedbackList = document.getElementById('feedbackList');
+    const successMsg = document.getElementById('successMsg');
+
+    // Load feedbacks from localStorage
+    function loadFeedbacks() {
+      const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+      feedbackList.innerHTML = '';
+      feedbacks.forEach(fb => {
+        const div = document.createElement('div');
+        div.className = 'feedback-item';
+        div.innerHTML = `<h4>${fb.name}</h4><p>${fb.message}</p><small>${fb.email}</small>`;
+        feedbackList.appendChild(div);
+      });
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (!name || !email || !message) return;
+
+      const feedback = { name, email, message };
+      const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+      feedbacks.unshift(feedback);
+      localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+
+      successMsg.textContent = "Feedback submitted successfully!";
+      setTimeout(() => successMsg.textContent = '', 3000);
+
+      form.reset();
+      loadFeedbacks();
+    });
+
+    // Initial load
+    loadFeedbacks();
+  </script>
+</body>
+</html>
